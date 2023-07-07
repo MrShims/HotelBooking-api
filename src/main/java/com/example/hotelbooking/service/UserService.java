@@ -28,6 +28,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
+    public Optional<User> findUserDetails(String username) {
+        return userRepository.findByUsername(username);
+    }
+
 
     @Override
     @Transactional
@@ -48,6 +52,10 @@ public class UserService implements UserDetailsService {
     public User createNewUser(User user) {
 
         user.setRoles(List.of(roleService.findByName("ROLE_USER").get()));
+
+
+
+
 
         return userRepository.save(user);
 

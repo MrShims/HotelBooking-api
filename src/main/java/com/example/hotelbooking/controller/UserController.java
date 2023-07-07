@@ -16,7 +16,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -36,18 +39,11 @@ public class UserController {
 
 
 
-    @GetMapping("/info")
-    public String registerUser()
-    {
 
-        return "heloo";
 
-    }
-
-    @PostMapping("/auth")
+    @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody JwtRequest authRequest)
     {
-        System.out.println("Я тут");
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
@@ -55,11 +51,10 @@ public class UserController {
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtils.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return new ResponseEntity(new JwtResponse(token),HttpStatus.OK);
     }
 
-
-    @PostMapping("/registation")
+    @PostMapping("/register")
     public ResponseEntity<?> createNewUser(@RequestBody RegistrationUserDto registrationUserDto)
     {
         if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword()))
@@ -72,22 +67,51 @@ public class UserController {
          return    new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с таким логином уже существует"), HttpStatus.BAD_REQUEST);
         }
 
-
-
-
-
         User user=new User();
 
         user.setUsername(registrationUserDto.getUsername());
         user.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
 
+
+        com.example.hotelbooking.entity.UserDetails detailsNewUser= new com.example.hotelbooking.entity.UserDetails();
+
+        detailsNewUser.setPhone(registrationUserDto.getPhone());
+        detailsNewUser.setBirthDate(LocalDate.parse(registrationUserDto.getBirthDate()));
+        detailsNewUser.setEmail(registrationUserDto.getEmail());
+        user.setUserDetails(detailsNewUser);
+
+
+
+
         userService.createNewUser(user);
 
 
 
-        return ResponseEntity.ok("Ok");
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/info")
+    public ResponseEntity<?> getUserProfile(Principal principal)
+    {
+        Optional<User> byUserName = userService.findByUserName(principal.getName());
+
+
+
+        if (byUserName.isPresent())
+        {
+            return new ResponseEntity<>(byUserName.get(),HttpStatus.OK);
+
+        }
+        else return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 
     }
+
+
+
+
+
+
 
 
 

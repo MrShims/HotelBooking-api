@@ -2,6 +2,7 @@ package com.example.hotelbooking.entity;
 
 
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -32,6 +33,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "details_id")
+    private UserDetails userDetails;
+
+
 
 
 }
