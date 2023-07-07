@@ -2,7 +2,6 @@ package com.example.hotelbooking.controller;
 import com.example.hotelbooking.dto.JwtRequest;
 import com.example.hotelbooking.dto.JwtResponse;
 import com.example.hotelbooking.dto.RegistrationUserDto;
-import com.example.hotelbooking.dto.UserDto;
 import com.example.hotelbooking.entity.User;
 import com.example.hotelbooking.exceptions.AppError;
 import com.example.hotelbooking.service.UserService;
@@ -65,12 +64,12 @@ public class UserController {
     {
         if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword()))
         {
-            new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают"), HttpStatus.BAD_REQUEST);
+           return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают"), HttpStatus.BAD_REQUEST);
         }
 
         if (userService.findByUserName(registrationUserDto.getUsername()).isPresent())
         {
-            new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с таким логином уже существует"), HttpStatus.BAD_REQUEST);
+         return    new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с таким логином уже существует"), HttpStatus.BAD_REQUEST);
         }
 
 
