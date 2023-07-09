@@ -1,5 +1,7 @@
 package com.example.hotelbooking.service;
 
+import com.example.hotelbooking.dto.UserDetailsRequest;
+import com.example.hotelbooking.dto.UserResponseDto;
 import com.example.hotelbooking.entity.User;
 import com.example.hotelbooking.repository.UserRepository;
 
@@ -53,12 +55,50 @@ public class UserService implements UserDetailsService {
 
         user.setRoles(List.of(roleService.findByName("ROLE_USER").get()));
 
-
-
-
-
         return userRepository.save(user);
 
 
     }
+
+    @Transactional
+    public void EditUserProfile(String username, UserDetailsRequest userDetailsDto)
+    {
+        Optional<User> byUsername = userRepository.findByUsername(username);
+
+
+        if (byUsername.isPresent())
+        {
+            User user = byUsername.get();
+
+            com.example.hotelbooking.entity.UserDetails userDetails=new com.example.hotelbooking.entity.UserDetails();
+
+            userDetails.setEmail(userDetailsDto.getEmail());
+            userDetails.setPhone(userDetailsDto.getPhone());
+            userDetails.setBirthDate(userDetailsDto.getBirthDate());
+            user.setUserDetails(userDetails);
+
+
+
+        }
+
+
+    }
+
+    public UserResponseDto createUserResponseDto(User user)
+    {
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setUsername(user.getUsername());
+        userResponseDto.setBirthDate(user.getUserDetails().getBirthDate());
+        userResponseDto.setPhone(user.getUserDetails().getPhone());
+        userResponseDto.setPhone(user.getUserDetails().getEmail());
+
+        return userResponseDto;
+
+
+    }
+
+
+
+
+
 }

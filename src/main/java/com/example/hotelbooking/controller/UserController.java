@@ -1,7 +1,6 @@
 package com.example.hotelbooking.controller;
-import com.example.hotelbooking.dto.JwtRequest;
-import com.example.hotelbooking.dto.JwtResponse;
-import com.example.hotelbooking.dto.RegistrationUserDto;
+
+import com.example.hotelbooking.dto.*;
 import com.example.hotelbooking.entity.User;
 import com.example.hotelbooking.exceptions.AppError;
 import com.example.hotelbooking.service.UserService;
@@ -35,15 +34,8 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
 
 
-
-
-
-
-
-
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody JwtRequest authRequest)
-    {
+    public ResponseEntity<?> loginUser(@RequestBody JwtRequest authRequest) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
@@ -51,29 +43,26 @@ public class UserController {
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtils.generateToken(userDetails);
-        return new ResponseEntity(new JwtResponse(token),HttpStatus.OK);
+        return new ResponseEntity(new JwtResponse(token), HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> createNewUser(@RequestBody RegistrationUserDto registrationUserDto)
-    {
-        if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword()))
-        {
-           return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают"), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> createNewUser(@RequestBody RegistrationUserDto registrationUserDto) {
+        if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают"), HttpStatus.BAD_REQUEST);
         }
 
-        if (userService.findByUserName(registrationUserDto.getUsername()).isPresent())
-        {
-         return    new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с таким логином уже существует"), HttpStatus.BAD_REQUEST);
+        if (userService.findByUserName(registrationUserDto.getUsername()).isPresent()) {
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с таким логином уже существует"), HttpStatus.BAD_REQUEST);
         }
 
-        User user=new User();
+        User user = new User();
 
         user.setUsername(registrationUserDto.getUsername());
         user.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
 
 
-        com.example.hotelbooking.entity.UserDetails detailsNewUser= new com.example.hotelbooking.entity.UserDetails();
+        com.example.hotelbooking.entity.UserDetails detailsNewUser = new com.example.hotelbooking.entity.UserDetails();
 
         detailsNewUser.setPhone(registrationUserDto.getPhone());
         detailsNewUser.setBirthDate(LocalDate.parse(registrationUserDto.getBirthDate()));
@@ -81,10 +70,7 @@ public class UserController {
         user.setUserDetails(detailsNewUser);
 
 
-
-
         userService.createNewUser(user);
-
 
 
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -92,27 +78,31 @@ public class UserController {
 
 
     @GetMapping("/info")
-    public ResponseEntity<?> getUserProfile(Principal principal)
-    {
+    public ResponseEntity<?> getUserProfile(Principal principal) {
         Optional<User> byUserName = userService.findByUserName(principal.getName());
 
 
+        if (byUserName.isPresent()) {
+            UserResponseDto userResponseDto=userService.createUserResponseDto(byUserName.get());
+            return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
 
-        if (byUserName.isPresent())
-        {
-            return new ResponseEntity<>(byUserName.get(),HttpStatus.OK);
-
-        }
-        else return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        } else return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
 
     }
 
+    @PutMapping("/info")
+    public ResponseEntity<?> editUserProfile(@RequestBody UserDetailsRequest userDetailsDto, Principal principal) {
 
 
+        String username = principal.getName();
 
 
+        userService.EditUserProfile(username, userDetailsDto);
+
+        return new ResponseEntity<>(HttpStatus.OK);
 
 
+    }
 
 
 }
