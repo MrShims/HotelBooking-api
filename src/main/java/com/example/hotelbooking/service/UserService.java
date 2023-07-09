@@ -30,9 +30,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
-    public Optional<User> findUserDetails(String username) {
-        return userRepository.findByUsername(username);
-    }
 
 
     @Override
@@ -98,7 +95,12 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public void deleteUser(String name) {
+
+        Optional<User> byUserName = findByUserName(name);
+
+        byUserName.ifPresent(userRepository::delete);
 
 
-
+    }
 }

@@ -1,7 +1,6 @@
 package com.example.hotelbooking.entity;
 
 
-
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,9 +19,6 @@ public class Role {
 
     @Column(name = "name")
     private String name;
-
-
-
 
 
 }
