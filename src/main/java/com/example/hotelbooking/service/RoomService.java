@@ -18,16 +18,12 @@ import java.util.Optional;
 public class RoomService {
 
 
-
-
     private final RoomRepository repository;
 
 
+    public Room createNewRoom(CreateRoomDto roomDto) {
 
-    public Room createNewRoom(CreateRoomDto roomDto)
-    {
-
-        Room room=new Room();
+        Room room = new Room();
 
         room.setArea(roomDto.getArea());
         room.setType(roomDto.getType());
@@ -35,37 +31,33 @@ public class RoomService {
         room.setCapacity(roomDto.getCapacity());
 
 
-       return repository.save(room);
+        return repository.save(room);
     }
 
-    public List<Room> getAllRooms()
-    {
+    public List<Room> getAllRooms() {
         return repository.findAll();
 
     }
 
-    public List<Room> getAvailableRooms(RoomFilterDto roomFilterDto)
-    {
+    public List<Room> getAvailableRooms(RoomFilterDto roomFilterDto) {
         int capacity = roomFilterDto.getCapacity();
-        LocalDate StartDate=LocalDate.parse(roomFilterDto.getStartDate());
-        LocalDate EndDate=LocalDate.parse(roomFilterDto.getEndDate());
+        LocalDate StartDate = LocalDate.parse(roomFilterDto.getStartDate());
+        LocalDate EndDate = LocalDate.parse(roomFilterDto.getEndDate());
 
         return null;
 
     }
 
-    public Optional<Room> getRoomById(Long id)
-    {
+    public Optional<Room> getRoomById(Long id) {
 
-       return repository.findRoomById(id);
+        return repository.findRoomById(id);
 
     }
 
     public Room editRoom(Long id, CreateRoomDto createRoomDto) throws RoomNotFoundException {
         Optional<Room> roomById = repository.findRoomById(id);
 
-        if (roomById.isPresent())
-        {
+        if (roomById.isPresent()) {
             Room room = roomById.get();
 
             room.setCapacity(createRoomDto.getCapacity());
@@ -81,13 +73,11 @@ public class RoomService {
 
     }
 
-    public boolean deleteRoom(Long id)
-    {
+    public boolean deleteRoom(Long id) {
 
-        Optional<Room> room=repository.findRoomById(id);
+        Optional<Room> room = repository.findRoomById(id);
 
-        if (room.isPresent())
-        {
+        if (room.isPresent()) {
             repository.deleteById(id);
             return true;
         }
@@ -95,12 +85,6 @@ public class RoomService {
 
 
     }
-
-
-
-
-
-
 
 
 }

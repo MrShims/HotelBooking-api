@@ -4,7 +4,6 @@ package com.example.hotelbooking.controller;
 import com.example.hotelbooking.dto.CreateRoomDto;
 import com.example.hotelbooking.dto.RoomFilterDto;
 import com.example.hotelbooking.entity.Room;
-import com.example.hotelbooking.exceptions.RoomNotFoundException;
 import com.example.hotelbooking.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,15 +27,12 @@ public class RoomController {
             List<Room> allRooms = roomService.getAllRooms();
             return new ResponseEntity<>(allRooms, HttpStatus.OK);
 
-        }
-        else
-        {
-                List<Room> availableRooms = roomService.getAvailableRooms(roomFilterDto);
-                 return new ResponseEntity<>(availableRooms,HttpStatus.OK);
+        } else {
+            List<Room> availableRooms = roomService.getAvailableRooms(roomFilterDto);
+            return new ResponseEntity<>(availableRooms, HttpStatus.OK);
         }
 
     }
-
 
 
     @GetMapping({"{roomId}"})
@@ -57,7 +53,7 @@ public class RoomController {
     }
 
     @PutMapping("{roomId}")
-    public ResponseEntity<?> editRoom(@PathVariable Long roomId, @RequestBody CreateRoomDto createRoomDto) throws RoomNotFoundException {
+    public ResponseEntity<?> editRoom(@PathVariable Long roomId, @RequestBody CreateRoomDto createRoomDto){
 
         Room room = roomService.editRoom(roomId, createRoomDto);
 
@@ -71,8 +67,7 @@ public class RoomController {
 
         boolean b = roomService.deleteRoom(roomId);
 
-        if (b)
-        {
+        if (b) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

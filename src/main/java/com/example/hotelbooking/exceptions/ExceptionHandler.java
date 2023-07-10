@@ -16,5 +16,15 @@ public class ExceptionHandler {
 
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(BookingNotFoundException.class)
+    public ResponseEntity<String> handleBookingNotFoundException(BookingNotFoundException ex) {
+
+
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+
+    }
+
+
+
 
 }

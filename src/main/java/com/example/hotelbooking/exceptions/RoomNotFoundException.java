@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class RoomNotFoundException extends Throwable {
+public class RoomNotFoundException extends RuntimeException {
 
 
    private String message;

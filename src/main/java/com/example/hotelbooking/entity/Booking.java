@@ -17,19 +17,19 @@ public class Booking {
     private Long id;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @Column(name = "startDate")
+    @Column(name = "startdate")
     private LocalDate startDate;
 
-    @Column(name = "endDate")
+    @Column(name = "enddate")
     private LocalDate endDate;
 
     @Column(name = "status")

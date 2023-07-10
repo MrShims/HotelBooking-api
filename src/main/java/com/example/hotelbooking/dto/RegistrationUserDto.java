@@ -22,14 +22,17 @@ public class RegistrationUserDto {
     @NotEmpty(message = "Подтверждение пароля не может быть пустым")
     private String confirmPassword;
 
+    @NotBlank
     @Email(message = "Неверный формат адреса электронной почты")
     private String email;
 
 
+    @NotBlank
     @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "Неверный формат даты рождения. Ожидается формат dd-MM-yyyy")
     private String birthDate;
 
 
+    @Pattern(regexp = "\\d-[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}", message = "Неверный формат номера телефона")
     private String phone;
 
 
