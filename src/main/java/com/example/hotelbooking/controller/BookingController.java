@@ -6,13 +6,17 @@ import com.example.hotelbooking.entity.Booking;
 import com.example.hotelbooking.exceptions.BookingNotFoundException;
 import com.example.hotelbooking.service.BookingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -22,17 +26,26 @@ public class BookingController {
 
     private final BookingService bookingService;
 
-
     @GetMapping
-    public ResponseEntity<?> getAllBookings() {
-        List<Booking> allBookings = bookingService.getAllBookings();
+    public ResponseEntity<?> getAllBookings(@RequestParam(value = "startDate", required = false) String startDate) {
 
-        return new ResponseEntity<>(allBookings, HttpStatus.OK);
+        List<Booking> ListBookings = null;
+
+        if (startDate == null) {
+            ListBookings = bookingService.getAllBookings();
+
+
+        } else {
+            ListBookings = bookingService.getBookingStartDate(startDate);
+        }
+
+
+        return new ResponseEntity<>(ListBookings, HttpStatus.OK);
 
     }
 
     @GetMapping("{bookingId}")
-    public ResponseEntity<?> getAllBookingById(@PathVariable Long bookingId) {
+    public ResponseEntity<?> getBookingById(@PathVariable Long bookingId) {
 
         Optional<Booking> bookingById = bookingService.getBookingById(bookingId);
 
@@ -44,9 +57,19 @@ public class BookingController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createBooking(Principal principal, @RequestBody CreateBookingRequest createBookingRequest) {
+    public ResponseEntity<?> createBooking(Principal principal, @Valid @RequestBody CreateBookingRequest createBookingRequest, BindingResult bindingResult) {
 
 
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult
+                    .getAllErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
         Booking booking = bookingService.createBooking(principal.getName(), createBookingRequest);
 
 
@@ -59,8 +82,7 @@ public class BookingController {
     }
 
     @DeleteMapping("{bookingId}")
-    public ResponseEntity<?> deleteBooking(@PathVariable Long bookingId)
-    {
+    public ResponseEntity<?> deleteBooking(@PathVariable Long bookingId) {
 
         bookingService.deleteBookingById(bookingId);
 

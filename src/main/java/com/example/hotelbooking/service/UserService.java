@@ -3,16 +3,16 @@ package com.example.hotelbooking.service;
 import com.example.hotelbooking.dto.UserDetailsRequest;
 import com.example.hotelbooking.dto.UserResponseDto;
 import com.example.hotelbooking.entity.User;
+import com.example.hotelbooking.exceptions.UserNotFoundException;
 import com.example.hotelbooking.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,7 +54,6 @@ public class UserService implements UserDetailsService {
 
         return userRepository.save(user);
 
-
     }
 
     @Transactional
@@ -71,12 +70,11 @@ public class UserService implements UserDetailsService {
 
             userDetails.setEmail(userDetailsDto.getEmail());
             userDetails.setPhone(userDetailsDto.getPhone());
-            userDetails.setBirthDate(userDetailsDto.getBirthDate());
+            userDetails.setBirthDate(LocalDate.parse(userDetailsDto.getBirthDate()));
             user.setUserDetails(userDetails);
 
-
-
         }
+        else throw new UserNotFoundException("Ошибка при изменении данных пользователя: Пользователь не найден");
 
 
     }
@@ -99,7 +97,12 @@ public class UserService implements UserDetailsService {
 
         Optional<User> byUserName = findByUserName(name);
 
-        byUserName.ifPresent(userRepository::delete);
+
+        if (byUserName.isPresent())
+        {
+            userRepository.delete(byUserName.get());
+        }
+        else throw new UserNotFoundException("Ошибка удаления: пользователь не найден");
 
 
     }

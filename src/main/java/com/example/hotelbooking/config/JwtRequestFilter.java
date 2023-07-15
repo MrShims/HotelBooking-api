@@ -1,5 +1,6 @@
 package com.example.hotelbooking.config;
 
+import com.example.hotelbooking.exceptions.UserNotFoundException;
 import com.example.hotelbooking.utils.JwtTokenUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -10,7 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,10 +34,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwt = authHeader.substring(7);
             try {
                 username = jwtTokenUtils.getUsername(jwt);
-            } catch (ExpiredJwtException e) {
+          } catch (ExpiredJwtException e) {
                 log.debug("Время жизни токена вышло");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("Время жизни токена вышло");
             } catch (SignatureException e) {
-                log.debug("Подпись неправильная");
+                log.debug("Неправильная подпись");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("Неправильная подпись");
             }
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -50,9 +56,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-
-
-
 
 
 }

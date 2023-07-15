@@ -51,15 +51,9 @@ public class BookingService {
             throw new CreateBookingException("Пользователь или Номер не найден");
         }
 
+        LocalDate  startBookingDate=LocalDate.parse(createBookingRequest.getStartDate());
+        LocalDate   endBookingDate=LocalDate.parse(createBookingRequest.getEndDate());
 
-        LocalDate startBookingDate=null;
-        LocalDate endBookingDate=null;
-        try {
-           startBookingDate=LocalDate.parse(createBookingRequest.getStartDate());
-             endBookingDate=LocalDate.parse(createBookingRequest.getEndDate());
-        } catch (Exception e) {
-            throw new CreateBookingException("Неправильный формат даты");
-        }
 
 
         Booking booking = new Booking();
@@ -73,6 +67,15 @@ public class BookingService {
         return bookingRepository.save(booking);
 
 
+    }
+
+    public List<Booking> getBookingStartDate(String startDate)
+    {
+        LocalDate localDate=LocalDate.parse(startDate);
+
+        List<Booking> allByStartDateAfter = bookingRepository.findAllByStartDateAfter(localDate);
+
+        return allByStartDateAfter;
     }
 
 

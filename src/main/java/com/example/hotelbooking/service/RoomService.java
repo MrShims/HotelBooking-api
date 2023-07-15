@@ -40,11 +40,15 @@ public class RoomService {
     }
 
     public List<Room> getAvailableRooms(RoomFilterDto roomFilterDto) {
+
+
         int capacity = roomFilterDto.getCapacity();
         LocalDate StartDate = LocalDate.parse(roomFilterDto.getStartDate());
         LocalDate EndDate = LocalDate.parse(roomFilterDto.getEndDate());
 
-        return null;
+        List<Room> availableRooms = repository.findAvailableRooms(capacity, StartDate, EndDate);
+
+        return availableRooms;
 
     }
 

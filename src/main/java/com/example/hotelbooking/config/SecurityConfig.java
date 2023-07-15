@@ -4,6 +4,7 @@ package com.example.hotelbooking.config;
 import com.example.hotelbooking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,9 +36,12 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().disable()
                 .authorizeRequests()
-                .antMatchers("/secured").authenticated()
-                .antMatchers("/users/info").authenticated()
-                .antMatchers("/admin").hasRole("ADMIN")
+                .antMatchers("/users/**").authenticated()
+                .antMatchers("/booking/**").authenticated()
+                .antMatchers("/rooms/**").authenticated()
+                .antMatchers(HttpMethod.DELETE,"/rooms/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT,"/rooms/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST,"/rooms/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
