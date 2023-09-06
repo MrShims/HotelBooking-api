@@ -32,7 +32,7 @@ public class RegistrationUserDto {
     private String birthDate;
 
 
-    @Pattern(regexp = "\\d-[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}", message = "Неверный формат номера телефона")
+
     private String phone;
 
 

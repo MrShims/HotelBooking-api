@@ -27,11 +27,4 @@ public class UserDetails {
     @Column(name = "phone_number")
     private String phone;
 
-
-
-
-
-
-
-
 }
