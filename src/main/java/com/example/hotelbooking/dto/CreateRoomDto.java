@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 public class CreateRoomDto {
 
 
-
     private String type;
 
     private BigDecimal price;
@@ -18,7 +17,6 @@ public class CreateRoomDto {
     private double area;
 
     private int capacity;
-
 
 
 }

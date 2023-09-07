@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +30,6 @@ public class UserService implements UserDetailsService {
     public Optional<User> findByUserName(String username) {
         return userRepository.findByUsername(username);
     }
-
 
 
     @Override
@@ -57,30 +57,26 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void EditUserProfile(String username, UserDetailsRequest userDetailsDto)
-    {
+    public void EditUserProfile(String username, UserDetailsRequest userDetailsDto) {
         Optional<User> byUsername = userRepository.findByUsername(username);
 
 
-        if (byUsername.isPresent())
-        {
+        if (byUsername.isPresent()) {
             User user = byUsername.get();
 
-            com.example.hotelbooking.entity.UserDetails userDetails=new com.example.hotelbooking.entity.UserDetails();
+            com.example.hotelbooking.entity.UserDetails userDetails = new com.example.hotelbooking.entity.UserDetails();
 
             userDetails.setEmail(userDetailsDto.getEmail());
             userDetails.setPhone(userDetailsDto.getPhone());
             userDetails.setBirthDate(LocalDate.parse(userDetailsDto.getBirthDate()));
             user.setUserDetails(userDetails);
 
-        }
-        else throw new UserNotFoundException("Ошибка при изменении данных пользователя: Пользователь не найден");
+        } else throw new UserNotFoundException("Ошибка при изменении данных пользователя: Пользователь не найден");
 
 
     }
 
-    public UserResponseDto createUserResponseDto(User user)
-    {
+    public UserResponseDto createUserResponseDto(User user) {
         UserResponseDto userResponseDto = new UserResponseDto();
         userResponseDto.setUsername(user.getUsername());
         userResponseDto.setBirthDate(user.getUserDetails().getBirthDate());
@@ -98,11 +94,9 @@ public class UserService implements UserDetailsService {
         Optional<User> byUserName = findByUserName(name);
 
 
-        if (byUserName.isPresent())
-        {
+        if (byUserName.isPresent()) {
             userRepository.delete(byUserName.get());
-        }
-        else throw new UserNotFoundException("Ошибка удаления: пользователь не найден");
+        } else throw new UserNotFoundException("Ошибка удаления: пользователь не найден");
 
 
     }

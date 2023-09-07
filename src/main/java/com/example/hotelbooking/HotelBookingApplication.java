@@ -16,17 +16,13 @@ public class HotelBookingApplication {
     }
 
     @Bean
-    public CommandLineRunner loadData(RoleRepository roleRepository)
-    {
+    public CommandLineRunner loadData(RoleRepository roleRepository) {
         return args -> {
 
-            Role role=new Role();
+            Role role = new Role();
             role.setName("ROLE_USER");
-            Role role1=new Role();
+            Role role1 = new Role();
             role1.setName("ROLE_ADMIN");
-
-
-
 
 
             roleRepository.save(role);

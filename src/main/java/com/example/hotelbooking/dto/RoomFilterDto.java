@@ -15,6 +15,4 @@ public class RoomFilterDto {
     private String endDate;
 
 
-
-
 }

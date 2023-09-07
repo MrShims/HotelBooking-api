@@ -32,7 +32,10 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
 
-
+    /**
+     * @param authRequest login and password
+     * @return JWT token
+     */
     public ResponseEntity<?> createAuthToken(JwtRequest authRequest)
     {
         try {

@@ -32,7 +32,6 @@ public class RegistrationUserDto {
     private String birthDate;
 
 
-
     private String phone;
 
 

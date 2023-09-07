@@ -9,14 +9,13 @@ import java.time.LocalDate;
 @Data
 public class UserResponseDto {
 
-        private String username;
+    private String username;
 
-        private String email;
+    private String email;
 
-        private LocalDate BirthDate;
+    private LocalDate BirthDate;
 
-        private String phone;
-
+    private String phone;
 
 
 }

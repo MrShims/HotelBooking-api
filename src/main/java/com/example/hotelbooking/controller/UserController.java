@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -27,14 +28,13 @@ public class UserController {
     private final UserService userService;
 
 
-
     @GetMapping()
     public ResponseEntity<?> getUserProfile(Principal principal) {
 
 
         Optional<User> byUserName = userService.findByUserName(principal.getName());
         if (byUserName.isPresent()) {
-            UserResponseDto userResponseDto=userService.createUserResponseDto(byUserName.get());
+            UserResponseDto userResponseDto = userService.createUserResponseDto(byUserName.get());
             return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
 
         } else throw new UserNotFoundException("Пользователь не найден");
@@ -44,14 +44,13 @@ public class UserController {
     @PutMapping()
     public ResponseEntity<?> editUserProfile(@Valid @RequestBody UserDetailsRequest userDetailsDto, Principal principal, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors())
-        {
-            List<String> error=bindingResult.getAllErrors()
+        if (bindingResult.hasErrors()) {
+            List<String> error = bindingResult.getAllErrors()
                     .stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.toList());
 
-            return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
 
         String username = principal.getName();
@@ -64,8 +63,7 @@ public class UserController {
     }
 
     @DeleteMapping()
-    public ResponseEntity<?> deleteUser(Principal principal)
-    {
+    public ResponseEntity<?> deleteUser(Principal principal) {
         String name = principal.getName();
 
         userService.deleteUser(name);
