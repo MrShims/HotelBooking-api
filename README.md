@@ -27,20 +27,23 @@ Make sure you have the following software installed on your machine:
  ### Testing the API   
 You can use Swagger UI or Postman to test the API. Below are some of the available endpoints:
  ```shell 
-GET /api/v1/users
-PUT /api/v1/users
-DELETE /api/v1/users
-GET /api/v1/booking
-POST /api/v1/booking
-GET /api/v1/booking/{{bookingId}}
-DELETE /api/v1/booking/{{bookingId}}
-POST /api/v1/login
-POST /api/v1/register
-GET /api/v1/rooms
-POST /api/v1/rooms
-GET /v1/rooms/{{roomId}}
-PUT /api/v1/rooms/{{roomId}}
-DELETE /api/v1/rooms/{{roomId}}
+GET /api/v1/users - get user profile.
+PUT /api/v1/users - edit user profile.
+DELETE /api/v1/users - delete user.
+
+GET /api/v1/booking - get list of all booking. @RequestParam startDate required = false.
+POST /api/v1/booking - create new booking.
+GET /api/v1/booking/{{bookingId}} - get booking by id.
+DELETE /api/v1/booking/{{bookingId}} - delete booking.
+
+POST /api/v1/login - user authentication.
+POST /api/v1/register - create new user.
+
+GET /api/v1/rooms - get list of all rooms. RoomFilterDto for filter rooms.
+POST /api/v1/rooms - create new room.
+GET /v1/rooms/{{roomId}} - get room by id.
+PUT /api/v1/rooms/{{roomId}} - edit room.
+DELETE /api/v1/rooms/{{roomId}} - delete room.
 
 
 
