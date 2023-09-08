@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 
+/**
+ * Сервис для номеров отеля
+ */
 @Service
 @RequiredArgsConstructor
 public class RoomService {
@@ -21,6 +24,12 @@ public class RoomService {
     private final RoomRepository repository;
 
 
+    /**
+     * Создает новую комнату на основе данных из DTO.
+     *
+     * @param roomDto DTO с данными для создания комнаты.
+     * @return Созданная комната.
+     */
     public Room createNewRoom(CreateRoomDto roomDto) {
 
         Room room = new Room();
@@ -34,11 +43,22 @@ public class RoomService {
         return repository.save(room);
     }
 
+    /**
+     * Получает список всех номеров.
+     *
+     * @return Список всех номеров.
+     */
     public List<Room> getAllRooms() {
         return repository.findAll();
 
     }
 
+    /**
+     * Получает список свободных номеров.
+     *
+     * @param roomFilterDto DTO с фильтрами для поиска доступных номеров.
+     * @return Список доступных номеров, удовлетворяющих заданным критериям.
+     */
     public List<Room> getAvailableRooms(RoomFilterDto roomFilterDto) {
 
 
@@ -52,12 +72,26 @@ public class RoomService {
 
     }
 
+    /**
+     * Получает номер по её уникальному идентификатору.
+     *
+     * @param id Уникальный идентификатор номера.
+     * @return Optional с номером, если он найден, или пустой Optional, если номер не найдена.
+     */
     public Optional<Room> getRoomById(Long id) {
 
         return repository.findRoomById(id);
 
     }
 
+    /**
+     * Редактирует номер на основе предоставленных данных.
+     *
+     * @param id            Уникальный идентификатор номера.
+     * @param createRoomDto DTO с данными для редактирования номера.
+     * @return Отредактированный номер
+     * @throws RoomNotFoundException если номер с указанным идентификатором не найден.
+     */
     public Room editRoom(Long id, CreateRoomDto createRoomDto) throws RoomNotFoundException {
         Optional<Room> roomById = repository.findRoomById(id);
 
@@ -77,6 +111,12 @@ public class RoomService {
 
     }
 
+    /**
+     * Удаляет номер по её уникальному идентификатору.
+     *
+     * @param id Уникальный идентификатор номера
+     * @return `true`, если номер был найден и успешно удалена; `false`, если номер не найден.
+     */
     public boolean deleteRoom(Long id) {
 
         Optional<Room> room = repository.findRoomById(id);

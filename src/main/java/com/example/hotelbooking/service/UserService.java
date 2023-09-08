@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для управления пользователями
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -27,11 +30,26 @@ public class UserService implements UserDetailsService {
     private final RoleService roleService;
 
 
+    /**
+     * Метод для поиска пользователя по его имени.
+     *
+     * @param username Логин пользователя, по которому осуществляется поиск.
+     * @return Optional с пользователем, если он найден, или пустой Optional, если пользователь не найден.
+     *
+     */
     public Optional<User> findByUserName(String username) {
         return userRepository.findByUsername(username);
     }
 
 
+    /**
+     * Загружает пользователя по его логину для аутентификации в системе.
+     *
+     * @param username Логин пользователя, которое будет использоваться для аутентификации.
+     * @return UserDetails объект, представляющий пользователя для аутентификации.
+     * @throws UsernameNotFoundException если пользователь с указанным именем не найден.
+     *
+     */
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -48,6 +66,12 @@ public class UserService implements UserDetailsService {
 
     }
 
+    /**
+     * оздает нового пользователя на основе предоставленных данных и устанавливает роль "ROLE_USER".
+     *
+     * @param user Объект пользователя с данными для создания.
+     * @return Созданный пользователь.
+     */
     public User createNewUser(User user) {
 
         user.setRoles(List.of(roleService.findByName("ROLE_USER").get()));
@@ -56,6 +80,13 @@ public class UserService implements UserDetailsService {
 
     }
 
+    /**
+     * Редактирует профиль пользователя на основе предоставленных данных.
+     *
+     * @param username Логин пользователя для редактирования.
+     * @param userDetailsDto DTO с данными для редактирования профиля пользователя.
+     * @throws UserNotFoundException если пользователь с указанным именем не найден.
+     */
     @Transactional
     public void EditUserProfile(String username, UserDetailsRequest userDetailsDto) {
         Optional<User> byUsername = userRepository.findByUsername(username);
@@ -76,6 +107,12 @@ public class UserService implements UserDetailsService {
 
     }
 
+    /**
+     * Создает объект UserResponseDto на основе данных пользователя.
+     *
+     * @param user Объект пользователя, на основе которого создается UserResponseDto.
+     * @return UserResponseDto, содержащий информацию о пользователе.
+     */
     public UserResponseDto createUserResponseDto(User user) {
         UserResponseDto userResponseDto = new UserResponseDto();
         userResponseDto.setUsername(user.getUsername());
@@ -89,6 +126,12 @@ public class UserService implements UserDetailsService {
     }
 
 
+    /**
+     * Удаляет пользователя по его имени.
+     *
+     * @param name Username пользователя, которого нужно удалить.
+     * @throws UserNotFoundException если пользователь с указанным username не найден.
+     */
     public void deleteUser(String name) {
 
         Optional<User> byUserName = findByUserName(name);

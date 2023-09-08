@@ -1,6 +1,7 @@
 package com.example.hotelbooking.controller;
 
 import com.example.hotelbooking.dto.JwtRequest;
+import com.example.hotelbooking.dto.JwtResponse;
 import com.example.hotelbooking.dto.RegistrationUserDto;
 import com.example.hotelbooking.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,9 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Контроллер для аутентификации и регистрации пользователей
+ */
 @RestController
 @RequiredArgsConstructor
 public class AuthenticationController {
@@ -24,13 +28,24 @@ public class AuthenticationController {
     private final AuthService authService;
 
 
+    /**
+     * Обрабатывает HTTP-запрос на аутентификацию пользователя.
+     * @param authRequest бъект с данными для аутентификации пользователя.
+     * @return ResponseEntity с токеном аутентификации или сообщением об ошибке аутентификации.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody JwtRequest authRequest) {
 
-        ResponseEntity<?> authToken = authService.createAuthToken(authRequest);
-        return authToken;
+        JwtResponse authToken = authService.createAuthToken(authRequest);
+        return new ResponseEntity<>(authToken,HttpStatus.OK);
     }
 
+    /**
+     * Создает нового пользователя с использованием предоставленных данных регистрации.
+     * @param registrationUserDto Объект с данными для регистрации нового пользователя.
+     * @param bindingResult Результаты валидации данных регистрации.
+     * @return ResponseEntity с информацией о созданном пользователе или сообщением об ошибках валидации.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> createNewUser(@Valid @RequestBody RegistrationUserDto registrationUserDto, BindingResult bindingResult) {
 

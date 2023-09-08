@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+/**
+ * Класс для настройки фильтров Spring Security
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

@@ -20,6 +20,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
+/**
+ * Контроллер для обратки запросов об информации о пользователе
+ */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -28,6 +31,11 @@ public class UserController {
     private final UserService userService;
 
 
+    /**
+     * Получает профиль пользователя на основе аутентификационных данных.
+     * @param principal Информация о текущем аутентифицированном пользователе.
+     * @return ResponseEntity с информацией о пользователе или сообщением об ошибке, если пользователь не найден.
+     */
     @GetMapping()
     public ResponseEntity<?> getUserProfile(Principal principal) {
 
@@ -41,6 +49,14 @@ public class UserController {
 
     }
 
+    /**
+     * Редактирует профиль пользователя на основе предоставленных данных.
+     * @param userDetailsDto Объект с данными для редактирования профиля пользователя.
+     * @param principal Информация о текущем аутентифицированном пользователе.
+     * @param bindingResult Результаты валидации данных редактирования профиля.
+     * @return ResponseEntity с HTTP-статусом OK (200) в случае успешного редактирования или
+     *  * HTTP-статусом BAD_REQUEST (400) в случае ошибок валидации данных.
+     */
     @PutMapping()
     public ResponseEntity<?> editUserProfile(@Valid @RequestBody UserDetailsRequest userDetailsDto, Principal principal, BindingResult bindingResult) {
 
@@ -62,6 +78,11 @@ public class UserController {
 
     }
 
+    /**
+     * Удаляет текущего пользователя (авторизованного пользователя).
+     * @param principal Информация о текущем аутентифицированном пользователе.
+     * @return ResponseEntity с HTTP-статусом OK (200) в случае успешного удаления пользователя.
+     */
     @DeleteMapping()
     public ResponseEntity<?> deleteUser(Principal principal) {
         String name = principal.getName();

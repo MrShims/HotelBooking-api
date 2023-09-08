@@ -44,6 +44,14 @@ public class ExceptionHandler {
 
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
+
+
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+
+    }
+
 
 
 

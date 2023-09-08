@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Контроллер для обратки запросов по номерам отеля
+ */
 @RestController
 @RequestMapping("/rooms")
 @RequiredArgsConstructor
@@ -22,6 +25,11 @@ public class RoomController {
 
     private final RoomService roomService;
 
+    /**
+     * Получает список комнат в зависимости от фильтрации.
+     * @param roomFilterDto Объект, содержащий параметры фильтрации комнат (необязательный параметр).
+     * @return ResponseEntity с списком комнат в соответствии с фильтрацией или всеми комнатами, если фильтр не указан.
+     */
     @GetMapping
     public ResponseEntity<?> getRooms(@ModelAttribute RoomFilterDto roomFilterDto) {
         if (roomFilterDto.getStartDate() == null) {
@@ -36,6 +44,11 @@ public class RoomController {
     }
 
 
+    /**
+     * Получает информацию о комнате по ее уникальному идентификатору.
+     * @param roomId Уникальный идентификатор комнаты, которую нужно получить.
+     * @return ResponseEntity с информацией о комнате или HTTP-статусом BAD_REQUEST (400) в случае отсутствия комнаты.
+     */
     @GetMapping({"{roomId}"})
     public ResponseEntity<?> getRoomById(@PathVariable Long roomId) {
         Optional<Room> roomById = roomService.getRoomById(roomId);
@@ -47,6 +60,11 @@ public class RoomController {
     }
 
 
+    /**
+     * Создает новую комнату на основе предоставленных данных.
+     * @param createRoomDto Объект с данными для создания новой комнаты.
+     * @return ResponseEntity с информацией о созданной комнате или сообщением об ошибке, если пользователь не имеет прав на создание.
+     */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createRoom(@RequestBody CreateRoomDto createRoomDto) {
@@ -54,6 +72,12 @@ public class RoomController {
         return new ResponseEntity<>(newRoom, HttpStatus.CREATED);
     }
 
+    /**
+     * Изменяет данные о существующей комнате на основе предоставленных данных.
+     * @param roomId Уникальный идентификатор комнаты, которую нужно изменить.
+     * @param createRoomDto createRoomDto Объект с данными для изменения комнаты.
+     * @return ResponseEntity с информацией об измененной комнате.
+     */
     @PutMapping("{roomId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> editRoom(@PathVariable Long roomId, @RequestBody CreateRoomDto createRoomDto) {
@@ -65,6 +89,12 @@ public class RoomController {
 
     }
 
+    /**
+     * Удаляет комнату по ее уникальному идентификатору.
+     * @param roomId Уникальный идентификатор номера, который нужно удалить.
+     * @return ResponseEntity с HTTP-статусом OK (200) в случае успешного удаления или
+     *  * HTTP-статусом NOT_FOUND (404) в случае отсутствия комнаты с указанным идентификатором.
+     */
     @DeleteMapping("{roomId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteRoom(@PathVariable Long roomId) {

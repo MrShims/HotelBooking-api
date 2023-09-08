@@ -6,6 +6,7 @@ import com.example.hotelbooking.dto.JwtResponse;
 import com.example.hotelbooking.dto.RegistrationUserDto;
 import com.example.hotelbooking.entity.User;
 import com.example.hotelbooking.exceptions.AppError;
+import com.example.hotelbooking.exceptions.AuthenticationException;
 import com.example.hotelbooking.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
+/**
+ * Сервис для регистрации и аутентификации пользователей.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -33,29 +38,36 @@ public class AuthService {
 
 
     /**
+     * Метод для аутентификации пользователя. В случае успеха возвращается JsonWebToken
+     *
      * @param authRequest login and password
      * @return JWT token
      */
-    public ResponseEntity<?> createAuthToken(JwtRequest authRequest)
-    {
+    public JwtResponse createAuthToken(JwtRequest authRequest) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(), "Неправильный логин или пароль"), HttpStatus.UNAUTHORIZED);
+            throw new AuthenticationException("Wrong password or username");
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtils.generateToken(userDetails);
 
-        return new ResponseEntity(new JwtResponse(token), HttpStatus.OK);
+        return new JwtResponse(token);
     }
 
-    public ResponseEntity<?> createNewUser( RegistrationUserDto registrationUserDto) {
+    /**
+     * Метод для регистрации нового пользователя. В случае успеха возвращается HttpStatus.Created. В случае ошибки возвращается HttpStatus.Bad_Request
+     *
+     * @param registrationUserDto User data
+     * @return httpStatus
+     */
+    public ResponseEntity<?> createNewUser(RegistrationUserDto registrationUserDto) {
 
         if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают"), HttpStatus.BAD_REQUEST);
+            throw new AuthenticationException("Пароли не совпадают");
         }
         if (userService.findByUserName(registrationUserDto.getUsername()).isPresent()) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с таким логином уже существует"), HttpStatus.BAD_REQUEST);
+            throw new AuthenticationException("Пользователь с таким логином уже существует");
         }
 
         User user = new User();
@@ -67,8 +79,8 @@ public class AuthService {
         detailsNewUser.setPhone(registrationUserDto.getPhone());
         try {
             detailsNewUser.setBirthDate(LocalDate.parse(registrationUserDto.getBirthDate()));
-        } catch (Exception e) {
-            return new ResponseEntity<>("Неправильный формат почты", HttpStatus.BAD_REQUEST);
+        } catch (DateTimeParseException e) {
+            throw new AuthenticationException("Неправильный формат даты рождения");
         }
         detailsNewUser.setEmail(registrationUserDto.getEmail());
         user.setUserDetails(detailsNewUser);
@@ -81,7 +93,6 @@ public class AuthService {
 
 
     }
-
 
 
 }

@@ -19,6 +19,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
+/**
+ * Контроллер для обработки запросов по бронированию номеров
+ */
 @RestController
 @RequestMapping("/booking")
 @RequiredArgsConstructor
@@ -26,6 +29,11 @@ public class BookingController {
 
     private final BookingService bookingService;
 
+    /**
+     * Возвращает список бронирований на указанную дату или все бронирования, если дата не указана.
+     * @param startDate Начальная дата для фильтрации бронирований (необязательный параметр).
+     * @return ResponseEntity с списком бронирований или пустым списком, если нет совпадений.
+     */
     @GetMapping
     public ResponseEntity<?> getAllBookings(@RequestParam(value = "startDate", required = false) String startDate) {
 
@@ -44,6 +52,12 @@ public class BookingController {
 
     }
 
+    /**
+     * Получает информацию о бронировании по его уникальному идентификатору.
+     * @param bookingId Уникальный идентификатор бронирования.
+     * @return ResponseEntity с информацией о бронировании или сообщением об ошибке, если бронирование не найдено.
+     * @throws BookingNotFoundException если бронирование с указанным идентификатором не найдено.
+     */
     @GetMapping("{bookingId}")
     public ResponseEntity<?> getBookingById(@PathVariable Long bookingId) {
 
@@ -56,6 +70,13 @@ public class BookingController {
 
     }
 
+    /**
+     * Создает новое бронирование на основе предоставленных данных.
+     * @param principal Информация о текущем аутентифицированном пользователе.
+     * @param createBookingRequest Запрос на создание бронирования содержащий id номера и даты бронирования.
+     * @param bindingResult Результаты валидации данных запроса.
+     * @return ResponseEntity с информацией о созданном бронировании или сообщением об ошибках валидации.
+     */
     @PostMapping()
     public ResponseEntity<?> createBooking(Principal principal, @Valid @RequestBody CreateBookingRequest createBookingRequest, BindingResult bindingResult) {
 
@@ -76,11 +97,12 @@ public class BookingController {
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 
-    @PutMapping("{bookingId}")
-    public ResponseEntity<?> editBooking(@PathVariable String bookingId) {
-        return null;
-    }
 
+    /**
+     * Удаляет бронирование по его уникальному идентификатору.
+     * @param bookingId Уникальный идентификатор бронирования, которое следует удалить.
+     * @return ResponseEntity с HTTP-статусом OK (200) в случае успешного удаления.
+     */
     @DeleteMapping("{bookingId}")
     public ResponseEntity<?> deleteBooking(@PathVariable Long bookingId) {
 

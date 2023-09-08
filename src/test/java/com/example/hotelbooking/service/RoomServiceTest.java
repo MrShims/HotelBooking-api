@@ -41,14 +41,14 @@ class RoomServiceTest {
 
         CreateRoomDto roomDto = new CreateRoomDto();
 
-        roomDto.setType("Ëþêñ");
+        roomDto.setType("Luxury");
         roomDto.setCapacity(4);
         roomDto.setArea(25.4);
         roomDto.setPrice(BigDecimal.valueOf(1500));
 
 
         Room expectedRoom = new Room();
-        expectedRoom.setType("Ëþêñ");
+        expectedRoom.setType("Luxury");
         expectedRoom.setCapacity(4);
         expectedRoom.setArea(25.4);
         expectedRoom.setPrice(BigDecimal.valueOf(1500));
